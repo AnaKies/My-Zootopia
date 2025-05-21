@@ -37,13 +37,19 @@ def serialize_animal(animal_obj):
     output_animal_data += "<div class='card__title'>"
 
     if "name" in animal_obj.keys():
-        output_animal_data += f"{animal_obj['name']}<br/>"
+        output_animal_data += f"{animal_obj['name']}"
+
+    if "taxonomy" in animal_obj.keys():
+        if "scientific_name" in animal_obj["taxonomy"].keys():
+            scientific_name = animal_obj["taxonomy"]["scientific_name"]
+            output_animal_data += f" ({scientific_name})<br/>"
+
     output_animal_data += "</div>\n"
 
     output_animal_data += "<p class='card__text'>"
     if "characteristics" in animal_obj.keys():
         characteristic_is_there = True
-        if "diet" in animal_obj["characteristics"]:
+        if "diet" in animal_obj["characteristics"].keys():
             diet = animal_obj["characteristics"]["diet"]
             output_animal_data += "<strong>Diet: </strong>"
             output_animal_data += f"{diet}<br/>\n"
@@ -59,6 +65,12 @@ def serialize_animal(animal_obj):
             type_of_animal = animal_obj["characteristics"]["type"]
             output_animal_data += "<strong>Type: </strong>"
             output_animal_data += f"{type_of_animal}<br/>\n"
+
+        if "lifespan" in animal_obj["characteristics"]:
+            lifespan = animal_obj["characteristics"]["lifespan"]
+            output_animal_data += "<strong>Lifespan: </strong>"
+            output_animal_data += f"{lifespan}<br/>\n"
+
     output_animal_data += "</p>"
     output_animal_data += "</li>\n"
 
