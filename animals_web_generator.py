@@ -71,7 +71,7 @@ def serialize_animal(animal_obj):
             output_animal_data += "<li class='animal_properties'><strong>Lifespan: </strong>"
             output_animal_data += f"{lifespan}</li>\n"
 
-    output_animal_data += "</ul></div>\n"
+    output_animal_data += "</ul></div></li>\n"
 
     return output_animal_data
 
@@ -145,23 +145,12 @@ def replace_html_with_animals(html_text, string_with_animals):
         raise Exception("Error: the __REPLACE_ANIMALS_INFO__ is not in the template.")
 
 
-def add_utf8_to_html(html_text):
-    """
-    Adds UTF-8 to HTML content for the correct formatting of the HTML file.
-    :param html_text: html content of the HTML file as string.
-    :return: HTML content with <meta> tag in the head block
-    """
-    return html_text.replace("<head>", """<head>
-        <meta charset=\"UTF-8\">""")
-
-
 def main():
     try:
         animals_data = load_data("animals_data.json")
         string_with_animals = add_animals_to_html(animals_data)
         html_text = get_html()
         working_html_text = html_text # work with a copy and don't touch the original
-        working_html_text = add_utf8_to_html(working_html_text)
         html_text_replaced = replace_html_with_animals(working_html_text, string_with_animals)
         write_html(html_text_replaced)
     except Exception as error:
