@@ -21,47 +21,60 @@ def load_data(file_path):
     return None
 
 
-def get_string_with_animals(animals_data):
+def serialize_animal(animal_obj):
     """
-    Gets the single string with predefined animal data.
+    Serializes a single animal to HTML
+    :param animal_obj: dictionary with animal data
+    :return: HTML string with animal data
+    """
+    output_animal_data = ""
+
+    # spare one if check later
+    characteristic_is_there = False
+
+    # append information to each string
+    output_animal_data += "<li class='cards__item'>\n"
+    output_animal_data += "<div class='card__title'>"
+
+    if "name" in animal_obj.keys():
+        output_animal_data += f"{animal_obj['name']}<br/>"
+    output_animal_data += "</div>\n"
+
+    output_animal_data += "<p class='card__text'>"
+    if "characteristics" in animal_obj.keys():
+        characteristic_is_there = True
+        if "diet" in animal_obj["characteristics"]:
+            diet = animal_obj["characteristics"]["diet"]
+            output_animal_data += "<strong>Diet: </strong>"
+            output_animal_data += f"{diet}<br/>\n"
+
+    if "locations" in animal_obj.keys():
+        if animal_obj["locations"]:  # check if the list is not empty
+            first_location = animal_obj["locations"][0]
+            output_animal_data += "<strong>Location: </strong>"
+            output_animal_data += f"{first_location}<br/>\n"
+
+    if characteristic_is_there:
+        if "type" in animal_obj["characteristics"]:
+            type_of_animal = animal_obj["characteristics"]["type"]
+            output_animal_data += "<strong>Type: </strong>"
+            output_animal_data += f"{type_of_animal}<br/>\n"
+    output_animal_data += "</p>"
+    output_animal_data += "</li>\n"
+
+    return output_animal_data
+
+
+def add_animals_to_html(animals_data):
+    """
+    Add to the given HTML the animal data.
     :param animals_data: JSON formatted animal data.
-    :return: string with predefined animal data.
+    :return: String with predefined animal data.
     """
     output_animals_data = ""
 
     for animal in animals_data:
-        # spare one if check later
-        characteristic_is_there = False
-
-        # append information to each string
-        output_animals_data += "<li class='cards__item'>\n"
-        output_animals_data += "<div class='card__title'>"
-
-        if "name" in animal.keys():
-            output_animals_data += f"{animal['name']}<br/>"
-        output_animals_data += "</div>\n"
-
-        output_animals_data += "<p class='card__text'>"
-        if "characteristics" in animal.keys():
-            characteristic_is_there = True
-            if "diet" in animal["characteristics"]:
-                diet = animal["characteristics"]["diet"]
-                output_animals_data += "<strong>Diet: </strong>"
-                output_animals_data += f"{diet}<br/>\n"
-
-        if "locations" in animal.keys():
-            if animal["locations"]:  # check if the list is not empty
-                first_location = animal["locations"][0]
-                output_animals_data += "<strong>Location: </strong>"
-                output_animals_data += f"{first_location}<br/>\n"
-
-        if characteristic_is_there:
-            if "type" in animal["characteristics"]:
-                type_of_animal = animal["characteristics"]["type"]
-                output_animals_data += "<strong>Type: </strong>"
-                output_animals_data += f"{type_of_animal}<br/>\n"
-        output_animals_data += "</p>"
-        output_animals_data += "</li>\n"
+        output_animals_data += serialize_animal(animal)
 
     return output_animals_data
 
@@ -134,7 +147,7 @@ def add_utf8_to_html(html_text):
 def main():
     try:
         animals_data = load_data("animals_data.json")
-        string_with_animals = get_string_with_animals(animals_data)
+        string_with_animals = add_animals_to_html(animals_data)
         html_text = get_html()
         working_html_text = html_text # work with a copy and don't touch the original
         working_html_text = add_utf8_to_html(working_html_text)
