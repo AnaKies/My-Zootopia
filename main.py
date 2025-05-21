@@ -56,12 +56,22 @@ def get_html():
         return html_file.read()
 
 
+def write_html(html_content):
+    """
+    Writes the content of the HTML file to the HTML file.
+    :param html_content: HTML content of the HTML file as string.
+    :return: None
+    """
+    with open("animals_template.html", "w") as html_file:
+        html_file.write(html_content)
+
+
 def main():
     animals_data = load_data("animals_data.json")
     string_with_animals = get_string_with_animals(animals_data)
-    html_raw = get_html()
-    html_raw.replace("__REPLACE_ANIMALS_INFO__", string_with_animals)
-
+    html_text = get_html()
+    html_text_replaced = html_text.replace("__REPLACE_ANIMALS_INFO__", string_with_animals)
+    write_html(html_text_replaced)
 
 if __name__ == "__main__":
     main()
