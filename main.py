@@ -37,8 +37,17 @@ def print_animals(animals_data):
             if "type" in animal["characteristics"]:
                 type_of_animal = animal["characteristics"]["type"]
                 print(f"Type: {type_of_animal}")
-
         print()
+
+
+def get_html():
+    """
+    Reads the content of the HTML file.
+    :return: content of the HTML file.
+    """
+    with open("animals_template.html", "r") as html_file:
+        return html_file.read()
+
 
 
 def main():
