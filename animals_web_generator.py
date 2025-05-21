@@ -42,37 +42,36 @@ def serialize_animal(animal_obj):
     if "taxonomy" in animal_obj.keys():
         if "scientific_name" in animal_obj["taxonomy"].keys():
             scientific_name = animal_obj["taxonomy"]["scientific_name"]
-            output_animal_data += f" ({scientific_name})<br/>"
+            output_animal_data += f" ({scientific_name})"
 
     output_animal_data += "</div>\n"
 
-    output_animal_data += "<p class='card__text'>"
+    output_animal_data += "<div class='card__text'><ul class='animal_list'>"
     if "characteristics" in animal_obj.keys():
         characteristic_is_there = True
         if "diet" in animal_obj["characteristics"].keys():
             diet = animal_obj["characteristics"]["diet"]
-            output_animal_data += "<strong>Diet: </strong>"
-            output_animal_data += f"{diet}<br/>\n"
+            output_animal_data += "<li class='animal_properties'><strong>Diet: </strong>"
+            output_animal_data += f"{diet}</li>\n"
 
     if "locations" in animal_obj.keys():
         if animal_obj["locations"]:  # check if the list is not empty
             first_location = animal_obj["locations"][0]
-            output_animal_data += "<strong>Location: </strong>"
-            output_animal_data += f"{first_location}<br/>\n"
+            output_animal_data += "<li class='animal_properties'><strong>Location: </strong>"
+            output_animal_data += f"{first_location}</li>\n"
 
     if characteristic_is_there:
         if "type" in animal_obj["characteristics"]:
             type_of_animal = animal_obj["characteristics"]["type"]
-            output_animal_data += "<strong>Type: </strong>"
-            output_animal_data += f"{type_of_animal}<br/>\n"
+            output_animal_data += "<li class='animal_properties'><strong>Type: </strong>"
+            output_animal_data += f"{type_of_animal}</li>\n"
 
         if "lifespan" in animal_obj["characteristics"]:
             lifespan = animal_obj["characteristics"]["lifespan"]
-            output_animal_data += "<strong>Lifespan: </strong>"
-            output_animal_data += f"{lifespan}<br/>\n"
+            output_animal_data += "<li class='animal_properties'><strong>Lifespan: </strong>"
+            output_animal_data += f"{lifespan}</li>\n"
 
-    output_animal_data += "</p>"
-    output_animal_data += "</li>\n"
+    output_animal_data += "</ul></div>\n"
 
     return output_animal_data
 
