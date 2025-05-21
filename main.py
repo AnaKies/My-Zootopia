@@ -8,7 +8,8 @@ def load_data(file_path):
     :return: JSON data as string
     """
     try:
-        with open(file_path, "r") as json_file:
+        # use encoding for correct representation of such special symbols like an apostrophe
+        with open(file_path, "r", encoding = "utf-8") as json_file:
             return json.load(json_file)
 
     except FileNotFoundError as error:
@@ -36,24 +37,23 @@ def get_string_with_animals(animals_data):
         output_animals_data += "<li class='cards__item'>"
 
         if "name" in animal.keys():
-            output_animals_data += f"Name: {animal['name']}<br/>\n"
+            output_animals_data += f"Name: {animal['name']}<br/>"
 
         if "characteristics" in animal.keys():
             characteristic_is_there = True
             if "diet" in animal["characteristics"]:
                 diet = animal["characteristics"]["diet"]
-                output_animals_data += f"Diet: {diet}<br/>\n"
+                output_animals_data += f"Diet: {diet}<br/>"
 
         if "locations" in animal.keys():
             first_location = animal["locations"][0]
-            output_animals_data += f"Locations: {first_location}<br/>\n"
+            output_animals_data += f"Locations: {first_location}<br/>"
 
         if characteristic_is_there:
             if "type" in animal["characteristics"]:
                 type_of_animal = animal["characteristics"]["type"]
-                output_animals_data += f"Type: {type_of_animal}<br/>\n"
+                output_animals_data += f"Type: {type_of_animal}<br/>"
         output_animals_data += "</li>"
-        output_animals_data += "\n"
 
     return output_animals_data
 
@@ -65,7 +65,8 @@ def get_html():
     """
     try:
         file_name = "animals_template.html"
-        with open(file_name, "r") as html_file:
+        # use encoding for correct representation of such special symbols like an apostrophe
+        with open(file_name, "r", encoding = "utf-8") as html_file:
             return html_file.read()
 
     except FileNotFoundError as error:
@@ -84,7 +85,8 @@ def write_html(html_content):
     """
     try:
         file_name = "animals.html"
-        with open(file_name, "w") as html_file:
+        # use encoding for correct representation of such special symbols like an apostrophe
+        with open(file_name, "w", encoding = "utf-8") as html_file:
             html_file.write(html_content)
 
     except FileNotFoundError as error:
@@ -111,12 +113,23 @@ def replace_html_with_animals(html_text, string_with_animals):
         raise Exception("Error: the __REPLACE_ANIMALS_INFO__ is not in the template.")
 
 
+def add_utf8_to_html(html_text):
+    """
+    Adds UTF-8 to HTML content for the correct formatting of the HTML file.
+    :param html_text: html content of the HTML file as string.
+    :return: HTML content with <meta> tag in the head block
+    """
+    return html_text.replace("<head>", """<head>
+        <meta charset=\"UTF-8\">""")
+
+
 def main():
     try:
         animals_data = load_data("animals_data.json")
         string_with_animals = get_string_with_animals(animals_data)
         html_text = get_html()
         working_html_text = html_text # work with a copy and don't touch the original
+        working_html_text = add_utf8_to_html(working_html_text)
         html_text_replaced = replace_html_with_animals(working_html_text, string_with_animals)
         write_html(html_text_replaced)
     except Exception as error:
