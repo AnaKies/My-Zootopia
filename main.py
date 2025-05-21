@@ -17,27 +17,31 @@ def print_animals(animals_data):
     :param animals_data: json formatted animal data.
     :return: None
     """
+    output_animals_data = ""
+
     for animal in animals_data:
         characteristic_is_there = False # spare one if check later
 
         if "name" in animal.keys():
-            print(f"Name: {animal['name']}")
+            output_animals_data += f"Name: {animal['name']}\n"
 
         if "characteristics" in animal.keys():
             characteristic_is_there = True
             if "diet" in animal["characteristics"]:
                 diet = animal["characteristics"]["diet"]
-                print(f"Diet: {diet}")
+                output_animals_data += f"Diet: {diet}\n"
 
         if "locations" in animal.keys():
             first_location = animal["locations"][0]
-            print(f"Locations: {first_location}")
+            output_animals_data += f"Locations: {first_location}\n"
 
         if characteristic_is_there:
             if "type" in animal["characteristics"]:
                 type_of_animal = animal["characteristics"]["type"]
-                print(f"Type: {type_of_animal}")
-        print()
+                output_animals_data += f"Type: {type_of_animal}\n"
+
+        output_animals_data += "\n"
+    print(output_animals_data)
 
 
 def get_html():
