@@ -34,12 +34,12 @@ def get_string_with_animals(animals_data):
         characteristic_is_there = False
 
         # append information to each string
-        output_animals_data += "<li class='cards__item'>"
+        output_animals_data += "<li class='cards__item'>\n"
         output_animals_data += "<div class='card__title'>"
 
         if "name" in animal.keys():
             output_animals_data += f"{animal['name']}<br/>"
-        output_animals_data += "</div>"
+        output_animals_data += "</div>\n"
 
         output_animals_data += "<p class='card__text'>"
         if "characteristics" in animal.keys():
@@ -47,21 +47,21 @@ def get_string_with_animals(animals_data):
             if "diet" in animal["characteristics"]:
                 diet = animal["characteristics"]["diet"]
                 output_animals_data += "<strong>Diet: </strong>"
-                output_animals_data += f"{diet}<br/>"
+                output_animals_data += f"{diet}<br/>\n"
 
         if "locations" in animal.keys():
             if animal["locations"]:  # check if the list is not empty
                 first_location = animal["locations"][0]
                 output_animals_data += "<strong>Location: </strong>"
-                output_animals_data += f"{first_location}<br/>"
+                output_animals_data += f"{first_location}<br/>\n"
 
         if characteristic_is_there:
             if "type" in animal["characteristics"]:
                 type_of_animal = animal["characteristics"]["type"]
                 output_animals_data += "<strong>Type: </strong>"
-                output_animals_data += f"{type_of_animal}<br/>"
+                output_animals_data += f"{type_of_animal}<br/>\n"
         output_animals_data += "</p>"
-        output_animals_data += "</li>"
+        output_animals_data += "</li>\n"
 
     return output_animals_data
 
