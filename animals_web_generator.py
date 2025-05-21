@@ -71,22 +71,14 @@ def serialize_animal(animal_obj):
             output_animal_data += "<li class='animal_properties'><strong>Lifespan: </strong>"
             output_animal_data += f"{lifespan}</li>\n"
 
+        if "skin_type" in animal_obj["characteristics"]:
+            lifespan = animal_obj["characteristics"]["skin_type"]
+            output_animal_data += "<li class='animal_properties'><strong>Skin type: </strong>"
+            output_animal_data += f"{lifespan}</li>\n"
+
     output_animal_data += "</ul></div></li>\n"
 
     return output_animal_data
-
-
-def serialize_skin_types(skin_types):
-    """
-    Create HTML with animal data.
-    :param skin_types: List with JSON-formatted animal data
-    :return: String with HTML-formatted animal data.
-    """
-    output_skin_types = "<h2>Select a skin type:</h2>\n"
-    for skin_type in skin_types:
-        output_skin_types += (f"<li class='cards__item'>\n"
-                              f"<div class='card__title'>{skin_type}</div></li>\n")
-    return output_skin_types
 
 def serialize_all_animals(animals_data):
     """
@@ -102,13 +94,12 @@ def serialize_all_animals(animals_data):
     return output_animals_data
 
 
-def get_all_skin_types(animals_data):
+def get_unique_skin_types(animals_data):
     """
-    Extracts from the animals JSON data the animals with the same skin type.
+    Extracts from the animals JSON data all skin types.
     :param animals_data: JSON formatted animal data.
-    :return: List of animals with the same skin type, list with unique skin types.
+    :return: List with unique skin types.
     """
-    animals_with_same_skin_types = []
     unique_skin_types = []
 
     for animal in animals_data:
@@ -117,10 +108,8 @@ def get_all_skin_types(animals_data):
                 # create a list with unique skin types
                 if animal["characteristics"]["skin_type"] not in unique_skin_types:
                     unique_skin_types.append(animal["characteristics"]["skin_type"])
-                # create the list with animals with the same skin type
-                animals_with_same_skin_types.append(animal)
 
-    return animals_with_same_skin_types, unique_skin_types
+    return unique_skin_types
 
 
 def get_template_html():
@@ -179,18 +168,58 @@ def insert_new_data_in_html_template(original_html, new_text):
         raise Exception("Error: the __REPLACE_ANIMALS_INFO__ is not in the template.")
 
 
+def generate_animals_with_selected_skin_type(skin_type, animals_data):
+    """
+    Filter the animals by selected skin type.
+    :param skin_type: Skin type as filter criteria.
+    :param animals_data: JSON formatted animal data.
+    :return: JSON formatted animal data filtered by a selected skin type.
+    Number of animals not included in the filtration because
+    of the missing skin type parameter.
+    """
+    filtered_animals = []
+    counter_animals_without_skin_type = 0
+
+    for animal in animals_data:
+        if "characteristics" in animal.keys():
+            if "skin_type" in animal["characteristics"].keys():
+                if animal["characteristics"]["skin_type"] == skin_type:
+                    filtered_animals.append(animal)
+            else:
+                counter_animals_without_skin_type += 1
+
+    return filtered_animals, counter_animals_without_skin_type
+
+
 def main():
     try:
+        file_name = "animals.html"
         animals_data = load_data("animals_data.json")
-        animals_with_same_skin_types, unique_skin_types = get_all_skin_types(animals_data)
-        html_formatted_animals = serialize_all_animals(animals_data)
-        html_formatted_skin_types = serialize_skin_types(unique_skin_types)
+        unique_skin_types = get_unique_skin_types(animals_data)
+
+        print("Available skin types:")
+        for skin_type in unique_skin_types:
+            print(f"\t{skin_type}")
+
+        while True:
+            selected_skin_type = input("Select a skin type to use: ")
+            if selected_skin_type in unique_skin_types:
+
+                break;
+            print("Invalid skin type.")
+
+        animals_with_selected_skin, counter_animals_without_skin_type = generate_animals_with_selected_skin_type(selected_skin_type, animals_data)
+
+        if counter_animals_without_skin_type > 0:
+            print(f"Attention! {counter_animals_without_skin_type} animals are not included in the animals data "
+                  f"because of missing skin type data.")
+
+        html_formatted_animals = serialize_all_animals(animals_with_selected_skin)
         template_html_for_animals = get_template_html()
-        template_html_for_skin_types = get_template_html()
         full_html_with_animals = insert_new_data_in_html_template(template_html_for_animals, html_formatted_animals)
-        full_html_with_skin_types = insert_new_data_in_html_template(template_html_for_animals, html_formatted_skin_types)
-        create_html_file("animals.html", full_html_with_animals)
-        create_html_file("index.html", full_html_with_skin_types)
+        create_html_file(file_name, full_html_with_animals)
+        print(f"The website {file_name} was generated for animals with selected skin type.")
+
     except Exception as error:
         print(f"Unexpected error: {error}")
 
