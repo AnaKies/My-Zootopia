@@ -76,11 +76,23 @@ def serialize_animal(animal_obj):
     return output_animal_data
 
 
-def add_animals_to_html(animals_data):
+def serialize_skin_types(skin_types):
     """
-    Add to the given HTML the animal data.
-    :param animals_data: JSON formatted animal data.
-    :return: String with predefined animal data.
+    Create HTML with animal data.
+    :param skin_types: List with JSON-formatted animal data
+    :return: String with HTML-formatted animal data.
+    """
+    output_skin_types = "<h2>Select a skin type:</h2>\n"
+    for skin_type in skin_types:
+        output_skin_types += (f"<li class='cards__item'>\n"
+                              f"<div class='card__title'>{skin_type}</div></li>\n")
+    return output_skin_types
+
+def serialize_all_animals(animals_data):
+    """
+    Create HTML with animal data.
+    :param animals_data: JSON-formatted animal data.
+    :return: String with HTML-formatted animal data.
     """
     output_animals_data = ""
 
@@ -90,10 +102,31 @@ def add_animals_to_html(animals_data):
     return output_animals_data
 
 
-def get_html():
+def get_all_skin_types(animals_data):
     """
-    Reads the content of the HTML file.
-    :return: Content of the HTML file.
+    Extracts from the animals JSON data the animals with the same skin type.
+    :param animals_data: JSON formatted animal data.
+    :return: List of animals with the same skin type, list with unique skin types.
+    """
+    animals_with_same_skin_types = []
+    unique_skin_types = []
+
+    for animal in animals_data:
+        if "characteristics" in animal.keys():
+            if "skin_type" in animal["characteristics"].keys():
+                # create a list with unique skin types
+                if animal["characteristics"]["skin_type"] not in unique_skin_types:
+                    unique_skin_types.append(animal["characteristics"]["skin_type"])
+                # create the list with animals with the same skin type
+                animals_with_same_skin_types.append(animal)
+
+    return animals_with_same_skin_types, unique_skin_types
+
+
+def get_template_html():
+    """
+    Reads the content of the template HTML file.
+    :return: Content of the tamplate HTML file.
     """
     try:
         file_name = "animals_template.html"
@@ -109,14 +142,15 @@ def get_html():
         print(f"Error: Unexpected error at reading {file_name}.\n{error}")
     return None
 
-def write_html(html_content):
+
+def create_html_file(file_name, html_content):
     """
     Writes the content of the HTML file to the HTML file.
+    :param file_name: Name of the HTML file.
     :param html_content: HTML content of the HTML file as string.
     :return: None
     """
     try:
-        file_name = "animals.html"
         # use encoding for correct representation of such special symbols like an apostrophe
         with open(file_name, "w", encoding = "utf-8") as html_file:
             html_file.write(html_content)
@@ -129,17 +163,17 @@ def write_html(html_content):
         print(f"Error: Unexpected error at writing {file_name}.\n{error}")
 
 
-def replace_html_with_animals(html_text, string_with_animals):
+def insert_new_data_in_html_template(original_html, new_text):
     """
-    Replaces HTML content with animal data.
-    :param html_text: The HTML content of the HTML file as string.
-    :param string_with_animals: Text to be replaced with the animal data.
-    :return: string with replaced HTML content.
+    Replaces HTML content with new text.
+    :param original_html: The HTML content of the HTML file as string.
+    :param new_text: Text for replacement.
+    :return: New HTML content with replaced text.
     """
-    if "__REPLACE_ANIMALS_INFO__" in html_text:
-        html_text_replaced = html_text.replace(
+    if "__REPLACE_ANIMALS_INFO__" in original_html:
+        html_text_replaced = original_html.replace(
                                     "__REPLACE_ANIMALS_INFO__",
-                                    string_with_animals)
+                                    new_text)
         return html_text_replaced
     else:
         raise Exception("Error: the __REPLACE_ANIMALS_INFO__ is not in the template.")
@@ -148,11 +182,15 @@ def replace_html_with_animals(html_text, string_with_animals):
 def main():
     try:
         animals_data = load_data("animals_data.json")
-        string_with_animals = add_animals_to_html(animals_data)
-        html_text = get_html()
-        working_html_text = html_text # work with a copy and don't touch the original
-        html_text_replaced = replace_html_with_animals(working_html_text, string_with_animals)
-        write_html(html_text_replaced)
+        animals_with_same_skin_types, unique_skin_types = get_all_skin_types(animals_data)
+        html_formatted_animals = serialize_all_animals(animals_data)
+        html_formatted_skin_types = serialize_skin_types(unique_skin_types)
+        template_html_for_animals = get_template_html()
+        template_html_for_skin_types = get_template_html()
+        full_html_with_animals = insert_new_data_in_html_template(template_html_for_animals, html_formatted_animals)
+        full_html_with_skin_types = insert_new_data_in_html_template(template_html_for_animals, html_formatted_skin_types)
+        create_html_file("animals.html", full_html_with_animals)
+        create_html_file("index.html", full_html_with_skin_types)
     except Exception as error:
         print(f"Unexpected error: {error}")
 
